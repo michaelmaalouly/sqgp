@@ -1,0 +1,42 @@
+ &run_params
+ therm_drag=0.8
+ n_hypo = 2
+ idum = -7
+ idump = -8
+ forc_coef=0.02
+ forc_corr = 0.
+ kf_min = 4
+ kf_max = 6
+ kmax = 127
+ delk = 1.5
+ k_o = 14.
+ m_o = 25
+ e_o = 1.e-6
+ del_vort = 0.65
+ aspect_vort = 2.
+ linear =.false.
+ psi_init_type = 'read'
+ psi_init_file = 'psi0'
+ start_frame = 51
+ isign= -1.
+ use_forcing = .true.
+ filter_type = 'hyperviscous_ab3'
+ filter_exp = 4
+ nu = 5.e4
+ k_cut = 50
+ split_runs = .true.
+ rossby = 0.1
+ total_counts = 4000
+ write_step = 200
+ diag1_step = 200
+ diag2_step = 200
+ dt = 0.001
+ lagrangian = .true.
+ lagr_init_type = 'random'
+ ntra = 768
+ delta0 = 0.0122718463030851
+ comp_lag_grad = .true.
+ advect_g = .false.
+ write_lagr = 10
+ /
+

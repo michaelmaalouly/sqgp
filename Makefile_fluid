@@ -1,0 +1,91 @@
+#
+# Makefile for SQG+1 tuerbulence model
+
+
+OUTDIR = .
+
+
+# pour lire du big-endian (avec io_tools_lire_be.f90)
+# -fconvert=swap
+
+
+
+#-----------------    GNU    ------------------------
+##LIBS = -lfftw3_threads -lfftw3
+#F90FLAGS = -I/usr/include -ffree-form  -O3 -fdefault-real-8  -ffree-line-length-132  
+#F77FLAGS =  -ffixed-form -O3 -fdefault-real-8  -ffixed-line-length-132 
+##F90 =  gfortran -fopenmp
+#LIBS = -lfftw3
+#F90 = gfortran
+
+#-----------------   INTEL   ------------------------
+# version serial
+#LIBS = -I$(MKLROOT)/include/fftw -mkl=sequential
+#F90 = ifort -fpe0 -I$(MKLROOT)/include/fftw 
+
+# version parallele
+#LIBS = -I$(MKLROOT)/include/fftw -mkl=parallel
+#F90 = ifort -I$(MKLROOT)/include/fftw -vec-report0
+
+# version FFTW serial  (penser a mettre FFTW_MEASURE dans la creation du plan dans fft_fftw.f90)
+#LIBS =  -lfftw3
+#F90 = ifort -I/usr/include
+
+#------------
+#on fluid.univ-lille.fr
+MKLPATH=$(MKLROOT)/lib/intel64_lin
+MKLINCLUDE=$(MKLROOT)/include/fftw
+
+LIBS = -I$(MKLROOT)/include/fftw -qmkl=parallel
+F90 = ifort -L$(MKLPATH) -I$(MKLINCLUDE)
+#------------
+
+# for both serial/parallel
+F90FLAGS = -assume byterecl -convert little_endian -extend-source 132 -real-size 64  
+F77FLAGS = -assume byterecl -convert little_endian -extend-source 132 -real-size 64  
+# -----------------------------------------------------------------
+
+
+
+
+
+SOURCES = io_tools.f90 syscalls_linux.f90 fft_fftw.f90 \
+	numerics_lib.f90 transform_tools.f90 qg_params.f90 \
+	qg_arrays.f90 qg_diagnostics.f90 qg_run_tools.f90 \
+	qg_init_tools.f90 qg_driver.f90
+
+OBJECTS1=$(SOURCES:.f90=.o)
+OBJECTS=$(OBJECTS1:.f=.o)
+
+RM = rm -fr *.o *.mod *.d
+RMQG = rm -fr qg_*.o
+
+sqgpab3: $(OBJECTS)
+	$(F90)  $(F90FLAGS) $(OBJECTS)  $(LIBS) -o sqgplus_ab3_lagr.exe
+
+io_tools.o: io_tools.f90
+	$(F90) $(F90FLAGS) -c $<
+syscalls_linux.o: syscalls_linux.f90
+	$(F90) $(F90FLAGS) -c $<
+fft_fftw.o: fft_fftw.f90
+	$(F90) $(F90FLAGS) -c $<
+numerics_lib.o: numerics_lib.f90
+	$(F90) $(F90FLAGS) -c $<
+transform_tools.o: transform_tools.f90
+	$(F90) $(F90FLAGS) -c $<
+qg_params.o: qg_params.f90
+	$(F90) $(F90FLAGS) -c $<
+qg_arrays.o: qg_arrays.f90
+	$(F90) $(F90FLAGS) -c $<
+qg_run_tools.o: qg_run_tools.f90
+	$(F90) $(F90FLAGS) -c $<
+qg_init_tools.o: qg_init_tools.f90
+	$(F90) $(F90FLAGS) -c $<
+qg_diagnostics.o: qg_diagnostics.f90
+	$(F90) $(F90FLAGS) -c $<
+qg_driver.o: qg_driver.f90
+	$(F90) $(F90FLAGS) -c $<
+clean:
+	$(RM)
+cleanqg:
+	$(RMQG)
